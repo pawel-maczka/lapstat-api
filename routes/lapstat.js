@@ -1,20 +1,19 @@
-var express = require('express');
-var router = express.Router();
-var request = require('request');
-var cheerio = require('cheerio');
-
+const express = require('express');
+const router = express.Router();
+const request = require('request');
+const cheerio = require('cheerio');
 
 router.get('/', function (req, res) {
-    var url = 'http://managerdc7.rackservice.org:50915/lapstat?valid=1';
-    var result = [];
+    let url = 'http://managerdc7.rackservice.org:50915/lapstat?valid=1';
+    let result = [];
 
     request(url, function (error, response, html) {
         if (!error) {
-            var $ = cheerio.load(html);
+            let $ = cheerio.load(html);
 
             $('table tbody').filter(function () {
 
-                var rows = $(this).children();
+                let rows = $(this).children();
 
                 rows.each(function (index, row) {
                     result.push({
