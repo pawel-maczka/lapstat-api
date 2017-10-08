@@ -7,9 +7,9 @@ const sassMiddleware = require('node-sass-middleware');
 const cors = require('cors');
 const compression = require('compression');
 
-const index = require('./routes/index');
-const lapstat = require('./routes/lapstat');
-const cacheStorage = require('./cache/storage');
+const index = require('./src/routes/index');
+const lapstat = require('./src/routes/lapstat');
+const cacheStorage = require('./src/lapstat/cache/storage');
 
 const app = express();
 

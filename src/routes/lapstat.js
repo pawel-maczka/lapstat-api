@@ -1,8 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const request = require('request');
-const cheerio = require('cheerio');
-const cacheStorage = require('../cache/storage');
+const cacheStorage = require('../../src/lapstat/cache/storage');
+const DataReader = require('../../src/lapstat/data-reader');
+
 
 function getData() {
 
@@ -19,23 +20,8 @@ function getData() {
                     .on('data', (chunk) => html += chunk)
                     .on('error', (err) => reject(err))
                     .on('end', () => {
-                        let $ = cheerio.load(html);
-
-                        $('table tbody').filter(function () {
-
-                            let rows = $(this).children();
-
-                            rows.each(function (index, row) {
-                                times.push({
-                                    driver: row.children[3].children[0].data.trim(),
-                                    car: row.children[5].children[2].data.trim(),
-                                    time: row.children[7].children[0].data.trim(),
-                                    gap: row.children[9].children[0].data.trim(),
-                                });
-                            });
-                        });
-
-                        resolve({times: times});
+                        const reader = new DataReader(html);
+                        resolve({times: reader.parse()});
                     });
 
             });
