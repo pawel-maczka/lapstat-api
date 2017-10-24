@@ -55,10 +55,20 @@ app.use(function (err, req, res, next) {
 });
 
 setInterval(function () {
-    const data = lapstat.getData();
-    data.then(function (result) {
-        cacheStorage.set('times', result);
+    const dataPro = lapstat.getData('pro');
+    const dataSemipro = lapstat.getData('semipro');
+    const dataAm = lapstat.getData('am');
 
+    dataPro.then(function (result) {
+        cacheStorage.set('times_pro', result);
+    });
+
+    dataSemipro.then(function (result) {
+        cacheStorage.set('times_semipro', result);
+    });
+
+    dataAm.then(function (result) {
+        cacheStorage.set('times_am', result);
     });
 
 }, 1000 * 60);
