@@ -3,10 +3,10 @@ const router = express.Router();
 const request = require('request');
 const cacheStorage = require('../../src/lapstat/cache/storage');
 const DataReader = require('../../src/lapstat/data-reader');
+const UrlResolver = require('../../src/lapstat/url-resolver');
 
-
-function getData() {
-    let url = 'http://managerdc7.rackservice.org:50915/lapstat?valid=1';
+function getData(type) {
+    let url = UrlResolver.resolve(type);
 
     return new Promise(function (resolve, reject) {
         request
@@ -27,20 +27,40 @@ function getData() {
 
 }
 
-router.get('/', function (req, res) {
-    const cached = cacheStorage.get('times');
+function get(type, req, res) {
+    try {
+        const cachedKey = 'times_' + type;
+        const cached = cacheStorage.get(cachedKey);
 
-    if (!cached) {
-        const data = getData();
-        data.then(function (result) {
+        if (!cached) {
+            const data = getData(type);
+            data.then(function (result) {
+                res.setHeader('Content-Type', 'application/json');
+                cacheStorage.set(cachedKey, result);
+                res.send(JSON.stringify(result));
+            });
+        } else {
             res.setHeader('Content-Type', 'application/json');
-            cacheStorage.set('times', result);
-            res.send(JSON.stringify(result));
-        });
-    } else {
+            res.send(JSON.stringify(cached));
+        }
+    } catch (exception) {
+        console.log('Yikes', exception);
         res.setHeader('Content-Type', 'application/json');
-        res.send(JSON.stringify(cached));
+        res.send(JSON.stringify({exception: 'YIKES!'}));
     }
+}
+
+router.get('/pro', function (req, res) {
+    get('pro', req, res);
+
+});
+
+router.get('/semipro', function (req, res) {
+    get('semipro', req, res);
+});
+
+router.get('/am', function (req, res) {
+    get('am', req, res);
 });
 
 
