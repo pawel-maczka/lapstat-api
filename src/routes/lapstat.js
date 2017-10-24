@@ -6,9 +6,7 @@ const DataReader = require('../../src/lapstat/data-reader');
 
 
 function getData() {
-
     let url = 'http://managerdc7.rackservice.org:50915/lapstat?valid=1';
-    let times = [];
 
     return new Promise(function (resolve, reject) {
         request
